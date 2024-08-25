@@ -1,1 +1,4 @@
-export type Provider = "Google" | "Email";
+export enum Provider {
+  Google = "Google",
+  Email = "Email",
+}

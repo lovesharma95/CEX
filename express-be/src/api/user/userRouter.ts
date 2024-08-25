@@ -3,9 +3,10 @@ import express, { type Router } from "express";
 import { z } from "zod";
 
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
-import { GetUserSchema, UserSchema } from "@/api/user/userModel";
+import { SignupSchema, UserSchema } from "@/api/user/userModel";
 import { validateRequest } from "@/common/utils/httpHandlers";
 import { userController } from "./userController";
+import { StatusCodes } from "http-status-codes";
 
 export const userRegistry = new OpenAPIRegistry();
 export const userRouter: Router = express.Router();
@@ -13,20 +14,33 @@ export const userRouter: Router = express.Router();
 userRegistry.register("User", UserSchema);
 
 userRegistry.registerPath({
-  method: "get",
-  path: "/users",
+  method: "post",
+  path: "/auth/signup",
   tags: ["User"],
-  responses: createApiResponse(z.array(UserSchema), "Success"),
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: SignupSchema.shape.body,
+        },
+      },
+    },
+  },
+  responses: createApiResponse(
+    z.array(UserSchema),
+    "Success",
+    StatusCodes.CREATED
+  ),
 });
 
-userRouter.get("/", userController.getUsers);
+userRouter.post("/signup", userController.signupUser);
 
-userRegistry.registerPath({
-  method: "get",
-  path: "/users/{id}",
-  tags: ["User"],
-  request: { params: GetUserSchema.shape.params },
-  responses: createApiResponse(UserSchema, "Success"),
-});
+// userRegistry.registerPath({
+//   method: "get",
+//   path: "/users/{id}",
+//   tags: ["User"],
+//   request: { params: GetUserSchema.shape.params },
+//   responses: createApiResponse(UserSchema, "Success"),
+// });
 
-userRouter.get("/:id", validateRequest(GetUserSchema), userController.getUser);
+// userRouter.get("/:id", validateRequest(GetUserSchema), userController.getUser);

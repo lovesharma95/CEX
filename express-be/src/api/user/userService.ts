@@ -1,48 +1,82 @@
 import { StatusCodes } from "http-status-codes";
+import { Keypair } from "@solana/web3.js";
 
-import type { User } from "@/api/user/userModel";
 import { UserRepository } from "@/api/user/userRepository";
 import { ServiceResponse } from "@/common/models/serviceResponse";
 import { logger } from "@/server";
+import { User } from "@/common/orm/entities/users/User";
+import { UserWithWallet } from "./userTypes";
+import { Provider } from "@/common/orm/entities/users/types";
 
 export class UserService {
   private userRepository: UserRepository;
 
-  constructor(repository: UserRepository = new UserRepository()) {
-    this.userRepository = repository;
+  constructor() {
+    this.userRepository = new UserRepository();
   }
 
-  // Retrieves all users from the database
-  async findAll(): Promise<ServiceResponse<User[] | null>> {
+  async findUserByEmail(
+    email: string
+  ): Promise<ServiceResponse<Partial<User> | null>> {
     try {
-      const users = await this.userRepository.findAllAsync();
-      if (!users || users.length === 0) {
-        return ServiceResponse.failure("No Users found", null, StatusCodes.NOT_FOUND);
+      const users = await this.userRepository.findByEmail(email);
+      if (!users) {
+        return ServiceResponse.failure(
+          "No Account found",
+          null,
+          StatusCodes.NOT_FOUND
+        );
       }
-      return ServiceResponse.success<User[]>("Users found", users);
+
+      return ServiceResponse.success<Partial<User>>("Account found", {
+        id: users?.id,
+        email: users?.email,
+      });
     } catch (ex) {
-      const errorMessage = `Error finding all users: $${(ex as Error).message}`;
+      const errorMessage = `Error finding all users: ${(ex as Error).message}`;
       logger.error(errorMessage);
       return ServiceResponse.failure(
         "An error occurred while retrieving users.",
         null,
-        StatusCodes.INTERNAL_SERVER_ERROR,
+        StatusCodes.INTERNAL_SERVER_ERROR
       );
     }
   }
 
-  // Retrieves a single user by their ID
-  async findById(id: number): Promise<ServiceResponse<User | null>> {
+  async createUserWithWallets(userData: User) {
     try {
-      const user = await this.userRepository.findByIdAsync(id);
-      if (!user) {
-        return ServiceResponse.failure("User not found", null, StatusCodes.NOT_FOUND);
-      }
-      return ServiceResponse.success<User>("User found", user);
+      const keypair = Keypair.generate();
+
+      const data: UserWithWallet = {
+        ...userData,
+        provider: Provider.Google,
+        solWallet: {
+          publicKey: keypair.publicKey.toBase58(),
+          privateKey: keypair.secretKey.toString(),
+        },
+        inrWallet: {
+          balance: 0,
+        },
+      };
+
+      const users = await this.userRepository.createUserWithWallets(data);
+
+      return ServiceResponse.success<Partial<User>>(
+        "Account created",
+        {
+          id: users.id,
+          email: users.email,
+        },
+        StatusCodes.CREATED
+      );
     } catch (ex) {
-      const errorMessage = `Error finding user with id ${id}:, ${(ex as Error).message}`;
+      const errorMessage = `Error creating account: ${(ex as Error).message}`;
       logger.error(errorMessage);
-      return ServiceResponse.failure("An error occurred while finding user.", null, StatusCodes.INTERNAL_SERVER_ERROR);
+      return ServiceResponse.failure(
+        "An error occurred while creating account.",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   }
 }
