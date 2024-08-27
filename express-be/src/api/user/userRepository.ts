@@ -38,6 +38,21 @@ export class UserRepository {
     return this.userRepository.save(user);
   }
 
+  async updateUser(
+    data: Omit<UserWithWallet, "solWallet" | "inrWallet" | "email">,
+    user: User
+  ): Promise<User> {
+    // update User entity
+    user.name = data.name;
+    user.profilePicture = data.profilePicture;
+    user.sub = data.sub;
+    user.password = data.password;
+    user.provider = data.provider;
+
+    // Save the user
+    return this.userRepository.save(user);
+  }
+
   async findByEmail(email: string): Promise<User | null> {
     return this.userRepository.findOneBy({
       email: email,
