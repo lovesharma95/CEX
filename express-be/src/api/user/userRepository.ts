@@ -18,6 +18,7 @@ export class UserRepository {
     user.email = data.email;
     user.name = data.name;
     user.sub = data.sub;
+    user.profilePicture = data.profilePicture;
     user.password = data.password;
     user.provider = data.provider;
 

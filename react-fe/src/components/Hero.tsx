@@ -1,23 +1,17 @@
-import React, { useState } from "react";
-import { useGoogleLogin } from "@react-oauth/google";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import Button from "./Button";
-import { useNavigate } from "react-router-dom";
+import { useGoogleAuth } from "../hooks/useGoogleLogin";
 
 function Hero() {
-  const [session, setSession] = useState<any>(null);
+  const isAuthenticated = useSelector(
+    (state: any) => state.auth.isAuthenticated
+  );
   const navigate = useNavigate();
 
-  const signIn = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
-      console.log("tokenResponse", tokenResponse);
-
-      setSession({ data: { user: tokenResponse } });
-    },
-    onError: () => {
-      console.log("Login Failed");
-    },
-  });
+  const { signIn } = useGoogleAuth();
 
   return (
     <div>
@@ -33,7 +27,7 @@ function Hero() {
         Convert your INR into Cryptocurrency
       </div>
       <div className="pt-8 flex justify-center">
-        {session?.data?.user ? (
+        {isAuthenticated ? (
           <Button type="btn-secondary" onClick={() => navigate("/dashboard")}>
             Go to Dashboard
           </Button>

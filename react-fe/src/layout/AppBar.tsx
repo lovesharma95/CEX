@@ -1,26 +1,16 @@
-import React, { useState } from "react";
-import { useGoogleLogin } from "@react-oauth/google";
+import React from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import Button from "../components/Button";
+import { useGoogleAuth } from "../hooks/useGoogleLogin";
 
 function AppBar() {
-  const [session, setSession] = useState<any>(null);
+  const isAuthenticated = useSelector(
+    (state: any) => state.auth.isAuthenticated
+  );
 
-  const signOut = () => {
-    setSession(null);
-  };
-
-  const signIn = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
-      console.log("tokenResponse", tokenResponse);
-
-      setSession({ data: { user: tokenResponse } });
-    },
-    onError: () => {
-      console.log("Login Failed");
-    },
-  });
+  const { signIn, signOut } = useGoogleAuth();
 
   return (
     <div className="border-b px-2 py-2 flex justify-between">
@@ -28,7 +18,7 @@ function AppBar() {
         DCEX
       </Link>
       <div>
-        {session?.data?.user ? (
+        {isAuthenticated ? (
           <Button onClick={signOut} type="btn-primary">
             Logout
           </Button>
