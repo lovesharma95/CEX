@@ -1,9 +1,17 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { Suspense } from "react";
+
+import Loader from "./components/Loader";
+import { Routes } from "./routes";
+
 function App() {
   return (
     <div>
-      <h1 className="text-3xl font-bold underline text-cyan-500">
-        Hello world!
-      </h1>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <Suspense fallback={<Loader />}>
+          <Routes />
+        </Suspense>
+      </GoogleOAuthProvider>
     </div>
   );
 }
