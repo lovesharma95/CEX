@@ -17,15 +17,21 @@ export const useGoogleAuth = () => {
           tokenResponse.access_token
         );
 
-        const apiData = await authenticateWithBE({
+        const userData = {
           email: googleData.email,
           name: googleData.name,
           picture: googleData.picture,
           sub: googleData.sub,
-        });
+        };
 
-        const { accessToken, refreshToken } = apiData.responseObject;
-        dispatch(loginSuccess({ accessToken, refreshToken }));
+        const apiData = await authenticateWithBE(userData);
+
+        const { accessToken, refreshToken, id } = apiData.responseObject;
+        const user = {
+          id,
+          ...userData,
+        };
+        dispatch(loginSuccess({ accessToken, refreshToken, user }));
       } catch (error) {
         console.error("Error during login:", error);
       }
