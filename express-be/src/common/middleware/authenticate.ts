@@ -12,23 +12,28 @@ export const authenticateRequest = async (
 ) => {
   try {
     const authHeader = req.headers.authorization;
+
     const token = authHeader && authHeader.split(" ")[1];
-    if (token == null)
-      return ServiceResponse.failure(
-        "Unauthorized access!",
-        null,
-        StatusCodes.UNAUTHORIZED
+    if (token == null) {
+      return handleServiceResponse(
+        ServiceResponse.failure(
+          "Unauthorized access!",
+          null,
+          StatusCodes.UNAUTHORIZED
+        ),
+        res
       );
+    }
 
     const jwtManager = new JwtManager();
-    const verifiedToken = await jwtManager.verifyAccessToken(token);
+    const verifiedToken: any = await jwtManager.verifyAccessToken(token);
 
-    // req.user = verifiedToken.tokenDetails;
+    req.user = verifiedToken.tokenDetails;
 
     next();
-  } catch (err) {
-    const errorMessage = `Invalid input: ${err}`;
-    const statusCode = StatusCodes.BAD_REQUEST;
+  } catch (err: any) {
+    const errorMessage = `Unauthorized access!: ${err.message}`;
+    const statusCode = StatusCodes.UNAUTHORIZED;
     const serviceResponse = ServiceResponse.failure(
       errorMessage,
       null,

@@ -33,7 +33,11 @@ userRegistry.registerPath({
   ),
 });
 
-userRouter.post("/signup", userController.signupUser);
+userRouter.post(
+  "/signup",
+  validateRequest(SignupSchema),
+  userController.signupUser
+);
 
 // userRegistry.registerPath({
 //   method: "get",
