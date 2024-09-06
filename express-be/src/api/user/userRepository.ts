@@ -1,5 +1,5 @@
 import { Repository } from "typeorm";
-import { User } from "@/common/orm/entities/users/User";
+import { User } from "@/common/orm/entities/user/User";
 import { SolWallet } from "@/common/orm/entities/solWallet/SolWallet";
 import { InrWallet } from "@/common/orm/entities/inrWallet/InrWallet";
 import { UserWithWallet } from "./userTypes";

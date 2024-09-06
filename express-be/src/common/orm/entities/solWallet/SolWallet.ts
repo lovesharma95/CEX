@@ -5,7 +5,7 @@ import {
   OneToOne,
   JoinColumn,
 } from "typeorm";
-import { User } from "../users/User";
+import { User } from "../user/User";
 
 @Entity("sol_wallets")
 export class SolWallet {

@@ -4,9 +4,9 @@ import { Keypair } from "@solana/web3.js";
 import { UserRepository } from "@/api/user/userRepository";
 import { ServiceResponse } from "@/common/models/serviceResponse";
 import { logger } from "@/server";
-import { User } from "@/common/orm/entities/users/User";
+import { User } from "@/common/orm/entities/user/User";
 import { UserWithWallet } from "./userTypes";
-import { Provider } from "@/common/orm/entities/users/types";
+import { Provider } from "@/common/orm/entities/user/types";
 import { JwtManager } from "@/common/utils/jwtManager";
 
 export class UserService {

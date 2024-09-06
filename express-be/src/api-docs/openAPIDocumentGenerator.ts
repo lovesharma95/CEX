@@ -6,12 +6,14 @@ import {
 import { healthCheckRegistry } from "@/api/healthCheck/healthCheckRouter";
 import { userRegistry } from "@/api/user/userRouter";
 import { solWalletRegistry } from "@/api/solWallet/solWalletRouter";
+import { tokenRegistry } from "@/api/token/tokenRouter";
 
 export function generateOpenAPIDocument() {
   const registry = new OpenAPIRegistry([
     healthCheckRegistry,
     userRegistry,
     solWalletRegistry,
+    tokenRegistry,
   ]);
   // Register BearerAuth security scheme
   registry.registerComponent("securitySchemes", "BearerAuth", {

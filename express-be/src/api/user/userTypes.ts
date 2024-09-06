@@ -1,4 +1,4 @@
-import { Provider } from "@/common/orm/entities/users/types";
+import { Provider } from "@/common/orm/entities/user/types";
 
 export type UserWithWallet = {
   email: string;

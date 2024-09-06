@@ -5,9 +5,6 @@ import { SolWalletRepository } from "@/api/solWallet/solWalletRepository";
 import { ServiceResponse } from "@/common/models/serviceResponse";
 import { logger } from "@/server";
 import { SolWallet } from "@/common/orm/entities/solWallet/SolWallet";
-import { SolWalletWithWallet } from "./solWalletTypes";
-import { Provider } from "@/common/orm/entities/users/types";
-import { JwtManager } from "@/common/utils/jwtManager";
 
 export class SolWalletService {
   private solWalletRepository: SolWalletRepository;

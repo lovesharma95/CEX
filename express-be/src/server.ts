@@ -11,6 +11,7 @@ import rateLimiter from "@/common/middleware/rateLimiter";
 import requestLogger from "@/common/middleware/requestLogger";
 import { env } from "@/common/utils/envConfig";
 import { solWalletRouter } from "./api/solWallet/solWalletRouter";
+import { tokenRouter } from "./api/token/tokenRouter";
 
 const logger = pino({ name: "server start" });
 const app: Express = express();
@@ -32,6 +33,7 @@ app.use(requestLogger);
 app.use("/health-check", healthCheckRouter);
 app.use("/auth", userRouter);
 app.use("/sol-wallet", solWalletRouter);
+app.use("/token", tokenRouter);
 
 // Swagger UI
 app.use(openAPIRouter);
