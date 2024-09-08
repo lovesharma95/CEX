@@ -15,7 +15,7 @@ export class Blockchain {
     [
       Type.solana,
       new Connection(
-        "https://solana-mainnet.g.alchemy.com/v2/EspGgEsKtp6xdG1-P32lj9raEFUlgXNc"
+        "https://solana-devnet.g.alchemy.com/v2/EspGgEsKtp6xdG1-P32lj9raEFUlgXNc"
       ),
     ],
   ]);
@@ -28,7 +28,7 @@ export class Blockchain {
     return (
       this.connection.get(this.type) ??
       new Connection(
-        "https://solana-mainnet.g.alchemy.com/v2/EspGgEsKtp6xdG1-P32lj9raEFUlgXNc"
+        "https://solana-devnet.g.alchemy.com/v2/EspGgEsKtp6xdG1-P32lj9raEFUlgXNc"
       )
     );
   }
