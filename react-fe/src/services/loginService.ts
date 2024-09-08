@@ -8,8 +8,6 @@ interface AuthWithBE {
 }
 
 export const authenticateWithBE = async (data: AuthWithBE) => {
-  console.log(data.picture);
-
   try {
     const response = await fetch(`${BASE_URL}/auth/signup`, {
       method: "POST",

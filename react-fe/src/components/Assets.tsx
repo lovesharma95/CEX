@@ -1,74 +1,59 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { FaCopy } from "react-icons/fa";
+
 import Button from "./Button";
 import TokenList from "./TokenList";
+import { getWalletAddress } from "../services/walletService";
+import { getWalletTokensBalance } from "../services/tokenService";
 
-const tokens = [
-  {
-    name: "SOL",
-    mint: "So11111111111111111111111111111111111111112",
-    native: true,
-    price: "180.00",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/3/34/Solana_cryptocurrency_two.jpg",
-    decimals: 9,
-    balance: "10.00",
-    usdBalance: "1800.00",
-  },
-  {
-    name: "USDC",
-    mint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-    native: false,
-    price: "1.00",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1vAKYEl0YffTpWSxrqEi_gmUsl-0BuXSKMQ&s",
-    decimals: 6,
-    balance: "11.00",
-    usdBalance: "11.00",
-  },
-  {
-    name: "USDT",
-    mint: "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
-    native: false,
-    price: "1.00",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvSxrpym7ij1Hf6zQOltcDORlrJGyj1kPf3A&s",
-    decimals: 6,
-    balance: "12.11",
-    usdBalance: "12.11",
-  },
-];
-
-const data = {
-  tokens,
-  totalBalance: "1823.11",
-};
-
-function Assets({ userId }: { userId: string }) {
+function Assets() {
+  const accessToken: string = useSelector(
+    (state: any) => state.auth.accessToken
+  );
   const [userWallet, setUserWallet] = useState<any>(null);
   const [copied, setCopied] = useState(false);
+  const [data, setData] = useState<any>(null);
 
   useEffect(() => {
     async function getUserWallet() {
-      const wallet = {
-        publicKey: "some key",
-      };
+      const apiData = await getWalletAddress(accessToken);
+      const { publicKey } = apiData.responseObject;
 
-      if (!wallet) {
-        console.log("No solana wallet found associated to the user");
+      if (!publicKey) {
+        console.log("No solana wallet found associated with the user");
         setUserWallet(null);
+      } else {
+        setUserWallet(publicKey);
       }
-
-      setUserWallet(wallet);
     }
 
     getUserWallet();
-  }, []);
+  }, [accessToken]);
+
+  useEffect(() => {
+    if (userWallet) {
+      async function getWalletTokens() {
+        const apiData = await getWalletTokensBalance(accessToken, userWallet);
+        const data = apiData.responseObject;
+
+        if (!data) {
+          console.log("No data found");
+          setData(null);
+        } else {
+          setData(data);
+        }
+      }
+
+      getWalletTokens();
+    }
+  }, [accessToken, userWallet]);
 
   useEffect(() => {
     if (copied) {
       const timeout = setTimeout(() => {
         setCopied(false);
-      }, 3000);
+      }, 2000);
 
       return () => {
         clearTimeout(timeout);
@@ -86,7 +71,7 @@ function Assets({ userId }: { userId: string }) {
         <div className="flex justify-between">
           <div>
             <span className="font-bold text-4xl text-black">
-              ${data.totalBalance}
+              ${data?.totalBalance ?? 0}
             </span>{" "}
             <span className="text-slate-500 text-xl font-bold">USD</span>
           </div>
@@ -94,17 +79,17 @@ function Assets({ userId }: { userId: string }) {
             <Button
               type="btn-neutral"
               onClick={() => {
-                navigator.clipboard.writeText(userWallet.publicKey);
+                navigator.clipboard.writeText(userWallet);
                 setCopied(true);
               }}
             >
-              {copied ? "copied" : "Your wallet address"}
+              {copied ? "copied" : <FaCopy />}
             </Button>
           </div>
         </div>
       </div>
       <div className="pt-4 bg-slate-100 p-12">
-        <TokenList tokens={data.tokens} />
+        <TokenList tokens={data?.tokens ?? []} />
       </div>
     </div>
   ) : (

@@ -8,8 +8,8 @@ class TokenController {
     req: Request,
     res: Response
   ) => {
-    const publicKey = await tokenService.getTokenForAddress(req.params.address);
-    return handleServiceResponse(publicKey, res);
+    const tokenData = await tokenService.getTokenForAddress(req.params.address);
+    return handleServiceResponse(tokenData, res);
   };
 }
 

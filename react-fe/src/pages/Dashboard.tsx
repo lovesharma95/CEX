@@ -19,7 +19,7 @@ function Dashboard() {
     <div className="pt-8 flex justify-center">
       <div className="max-w-xl bg-white rounded shadow-md w-full">
         <Greeting image={user.picture ?? ""} name={user.name ?? ""} />
-        <Assets userId={user.id} />
+        <Assets />
       </div>
     </div>
   );
