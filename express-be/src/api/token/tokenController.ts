@@ -11,6 +11,14 @@ class TokenController {
     const tokenData = await tokenService.getTokenForAddress(req.params.address);
     return handleServiceResponse(tokenData, res);
   };
+
+  public getSupportedTokens: RequestHandler = async (
+    req: Request,
+    res: Response
+  ) => {
+    const tokenData = await tokenService.getSupportedTokens();
+    return handleServiceResponse(tokenData, res);
+  };
 }
 
 export const tokenController = new TokenController();

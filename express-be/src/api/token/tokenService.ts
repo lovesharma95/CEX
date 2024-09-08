@@ -53,6 +53,26 @@ export class TokenService {
       );
     }
   }
+
+  async getSupportedTokens(): Promise<
+    ServiceResponse<Partial<SolWallet> | null>
+  > {
+    try {
+      const supportedTokens = await this.tokenRepository.findTokens();
+
+      return ServiceResponse.success<any>("tokens found", supportedTokens);
+    } catch (ex) {
+      const errorMessage = `Error finding supported tokens: ${
+        (ex as Error).message
+      }`;
+      logger.error(errorMessage);
+      return ServiceResponse.failure(
+        "An error occurred while retrieving supported tokens.",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
 }
 
 export const tokenService = new TokenService();

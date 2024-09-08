@@ -6,6 +6,7 @@ import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
 import {
   GetTokensForWalletAddressOutputSchema,
   GetTokensForWalletAddressInputSchema,
+  GetSupportedTokensOutputSchema,
 } from "@/api/token/tokenModel";
 import { tokenController } from "./tokenController";
 import { StatusCodes } from "http-status-codes";
@@ -16,6 +17,21 @@ export const tokenRegistry = new OpenAPIRegistry();
 export const tokenRouter: Router = express.Router();
 
 tokenRegistry.register("Token", GetTokensForWalletAddressOutputSchema);
+
+tokenRegistry.registerPath({
+  method: "get",
+  path: "/token",
+  tags: ["Token"],
+  request: {},
+  responses: createApiResponse(
+    GetSupportedTokensOutputSchema,
+    "Success",
+    StatusCodes.OK
+  ),
+  security: [{ BearerAuth: [] }],
+});
+
+tokenRouter.get("/", authenticateRequest, tokenController.getSupportedTokens);
 
 tokenRegistry.registerPath({
   method: "get",
