@@ -1,5 +1,6 @@
 import { useGoogleLogin } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { loginSuccess, logout } from "../redux/authSlice";
 import {
@@ -9,6 +10,7 @@ import {
 
 export const useGoogleAuth = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const signIn = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -43,6 +45,7 @@ export const useGoogleAuth = () => {
 
   const signOut = () => {
     dispatch(logout());
+    navigate("/");
   };
 
   return { signIn, signOut };

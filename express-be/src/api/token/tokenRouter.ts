@@ -7,6 +7,8 @@ import {
   GetTokensForWalletAddressOutputSchema,
   GetTokensForWalletAddressInputSchema,
   GetSupportedTokensOutputSchema,
+  SwapTokensOutputSchema,
+  SwapTokensInputSchema,
 } from "@/api/token/tokenModel";
 import { tokenController } from "./tokenController";
 import { StatusCodes } from "http-status-codes";
@@ -17,6 +19,34 @@ export const tokenRegistry = new OpenAPIRegistry();
 export const tokenRouter: Router = express.Router();
 
 tokenRegistry.register("Token", GetTokensForWalletAddressOutputSchema);
+
+tokenRegistry.registerPath({
+  method: "post",
+  path: "/token/swap",
+  tags: ["Token"],
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: SwapTokensInputSchema.shape.body,
+        },
+      },
+    },
+  },
+  responses: createApiResponse(
+    SwapTokensOutputSchema,
+    "Success",
+    StatusCodes.CREATED
+  ),
+  security: [{ BearerAuth: [] }],
+});
+
+tokenRouter.post(
+  "/swap",
+  authenticateRequest,
+  validateRequest(SwapTokensInputSchema),
+  tokenController.swapTokens
+);
 
 tokenRegistry.registerPath({
   method: "get",

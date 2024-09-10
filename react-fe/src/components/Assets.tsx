@@ -63,7 +63,7 @@ function Assets() {
 
   return userWallet ? (
     <div className="text-slate-400 mt-4 font-bold">
-      <div className="flex flex-col p-12">
+      <div className="flex flex-col p-8">
         <div>
           Account assets
           <br />
@@ -83,7 +83,7 @@ function Assets() {
                 setCopied(true);
               }}
             >
-              {copied ? "copied" : <FaCopy />}
+              {copied ? "copied" : `Your wallet address`}
             </Button>
           </div>
         </div>

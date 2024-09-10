@@ -33,3 +33,38 @@ export const GetSupportedTokensOutputSchema = z.object({
 export const GetTokensForWalletAddressInputSchema = z.object({
   params: z.object({ address: z.string() }),
 });
+
+export const SwapTokensInputSchema = z.object({
+  body: z.object({
+    inputMint: z.string(),
+    inAmount: z.string(),
+    outputMint: z.string(),
+    outAmount: z.string(),
+    otherAmountThreshold: z.string(),
+    swapMode: z.string(),
+    slippageBps: z.number(),
+    platformFee: z.nullable(z.string()), // Nullable field
+    priceImpactPct: z.string(),
+    routePlan: z.array(
+      z.object({
+        swapInfo: z.object({
+          ammKey: z.string(),
+          label: z.string(),
+          inputMint: z.string(),
+          outputMint: z.string(),
+          inAmount: z.string(),
+          outAmount: z.string(),
+          feeAmount: z.string(),
+          feeMint: z.string(),
+        }),
+        percent: z.number(),
+      })
+    ),
+    contextSlot: z.number(),
+    timeTaken: z.number(),
+  }),
+});
+
+export const SwapTokensOutputSchema = z.object({
+  txnId: z.string(),
+});

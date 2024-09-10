@@ -20,4 +20,10 @@ export class SolWalletRepository {
       },
     });
   }
+
+  async getUserSolWalletKeys(id: string) {
+    return this.solWalletRepository.findOne({
+      where: { user: { id: id } },
+    });
+  }
 }

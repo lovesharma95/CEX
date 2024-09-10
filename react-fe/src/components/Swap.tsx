@@ -7,6 +7,10 @@ import {
   getWalletTokensBalance,
 } from "../services/tokenService";
 import { getWalletAddress } from "../services/walletService";
+import { debounce } from "../utils";
+import axios from "axios";
+import { getSwapAmount, swapTokens } from "../services/swapService";
+import Button from "./Button";
 
 function Swap() {
   const accessToken: string = useSelector(
@@ -21,6 +25,7 @@ function Swap() {
   const [quoteAmount, setQuoteAmount] = useState<string>("");
   const [fetchingQuote, setFetchingQuote] = useState(false);
   const [quoteResponse, setQuoteResponse] = useState(null);
+  const [isSwapping, setIsSwapping] = useState(false);
 
   useEffect(() => {
     async function fetchSupportedTokens() {
@@ -75,11 +80,77 @@ function Swap() {
     }
   }, [accessToken, userWallet]);
 
+  const fetchQuote = debounce(async (baseAmount: string) => {
+    if (!baseAmount) return;
+    setFetchingQuote(true);
+    const controller = new AbortController();
+
+    try {
+      if (baseAsset.mint === quoteAsset.mint) {
+        setQuoteAmount(baseAmount);
+        setQuoteResponse(null);
+      } else {
+        const response = await getSwapAmount(
+          baseAsset.mint,
+          quoteAsset.mint,
+          baseAmount,
+          baseAsset.decimals,
+          controller
+        );
+
+        console.log("response", response);
+
+        setQuoteAmount(
+          (
+            Number(response.outAmount) / Number(10 ** quoteAsset.decimals)
+          ).toString()
+        );
+        setQuoteResponse(response);
+      }
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Request canceled", error.message);
+      } else {
+        console.error("Error fetching quote", error);
+      }
+    } finally {
+      setFetchingQuote(false);
+    }
+
+    return () => controller.abort();
+  }, 300);
+
+  useEffect(() => {
+    if (baseAmount) {
+      fetchQuote(baseAmount);
+    }
+  }, [baseAsset, quoteAsset, baseAmount]);
+
+  const swap = async () => {
+    // trigger swap with https://station.jup.ag/docs/apis/swap-api API in backend TODO
+    try {
+      setIsSwapping(true);
+      console.log("quoteResponse: ", quoteResponse);
+
+      const apiData = await swapTokens(quoteResponse, accessToken);
+      const data = apiData.responseObject;
+
+      if (data) {
+        setIsSwapping(false);
+      }
+    } catch (e) {
+      console.log("Error while sending a txn");
+      setIsSwapping(false);
+    }
+  };
+
   return (
     <div className="mt-4">
       <div className="text-2xl font-bold mb-4">Swap Tokens</div>
       <div className="bg-slate-50">
         <SwapInputRow
+          amount={baseAmount}
+          onAmountChange={(value: string) => setBaseAmount(value)}
           selectedToken={baseAsset}
           onSelect={setBaseAsset}
           topBorderEnabled={true}
@@ -114,7 +185,9 @@ function Swap() {
         </div>
 
         <SwapInputRow
+          inputLoading={fetchingQuote}
           selectedToken={quoteAsset}
+          amount={quoteAmount}
           onSelect={setQuoteAsset}
           inputDisabled={true}
           topBorderEnabled={false}
@@ -134,6 +207,11 @@ function Swap() {
             </div>
           }
         />
+      </div>
+      <div className="flex flex-row-reverse mt-2">
+        <Button type="btn-primary" onClick={swap}>
+          {isSwapping ? "swapping..." : "Swap"}
+        </Button>
       </div>
     </div>
   );

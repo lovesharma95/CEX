@@ -36,7 +36,7 @@ function Dashboard() {
             <Assets />
           </div>
 
-          <input
+          {/* <input
             type="radio"
             name="my_tabs_2"
             role="tab"
@@ -62,7 +62,7 @@ function Dashboard() {
             className="tab-content bg-base-100 border-base-300 rounded-box p-6"
           >
             Withdraw
-          </div>
+          </div> */}
 
           <input
             type="radio"

@@ -19,6 +19,11 @@ class TokenController {
     const tokenData = await tokenService.getSupportedTokens();
     return handleServiceResponse(tokenData, res);
   };
+
+  public swapTokens: RequestHandler = async (req: Request, res: Response) => {
+    const swapData = await tokenService.swapTokens(req.body, req.user._id);
+    return handleServiceResponse(swapData, res);
+  };
 }
 
 export const tokenController = new TokenController();

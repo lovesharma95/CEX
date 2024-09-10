@@ -3,27 +3,25 @@ import AssetSelector from "./AssetSelector";
 
 function SwapInputRow({
   onSelect,
-  //   amount,
-  //   onAmountChange,
+  amount,
+  onAmountChange,
   selectedToken,
-  //   title,
   subtitle,
   topBorderEnabled,
   bottomBorderEnabled,
   inputDisabled,
-  //   inputLoading,
+  inputLoading,
   label,
 }: {
   onSelect: (asset: any) => void;
   selectedToken: any;
-  //   title: string;
   subtitle?: ReactNode;
   topBorderEnabled: boolean;
   bottomBorderEnabled: boolean;
-  //   amount?: string;
-  //   onAmountChange?: (value: string) => void;
+  amount?: string;
+  onAmountChange?: (value: string) => void;
   inputDisabled?: boolean;
-  //   inputLoading?: boolean;
+  inputLoading?: boolean;
   label: string;
 }) {
   return (
@@ -43,14 +41,14 @@ function SwapInputRow({
       <div className="">
         <input
           disabled={inputDisabled}
-          //   onChange={(e) => {
-          //     onAmountChange?.(e.target.value);
-          //   }}
+          onChange={(e) => {
+            onAmountChange?.(e.target.value);
+          }}
           placeholder="0"
           type="text"
           className="bg-slate-50 outline-none w-72 text-4xl mt-8 mr-2"
           dir="rtl"
-          //   value={inputLoading ? "Loading" : amount}
+          value={inputLoading ? "Loading" : amount}
         ></input>
       </div>
     </div>
